@@ -16,7 +16,7 @@ vid.read(function(err, mat){
       console.log('>>', x, ':' , rec)
       if (x % 10 == 0){
         m2.rectangle([rec[0], rec[1]], [rec[2], rec[3]])
-        // m2.save('./out-motiontrack-' + x + '.jpg')
+        m2.save('./out-motiontrack-' + x + '.jpg')
       }
       if (x<100)
         iter();
