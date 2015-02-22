@@ -9,7 +9,7 @@ var GREEN = [0, 255, 0]; // B, G, R
 var WHITE = [255, 255, 255]; // B, G, R
 var RED   = [0, 0, 255]; // B, G, R
 
-cv.readImage('./files/stuff.png', function(err, im) {
+cv.readImage('./files/coin1.jpg', function(err, im) {
   if (err) throw err;
   var width = im.width();
   var height = im.height();
@@ -31,12 +31,40 @@ cv.readImage('./files/stuff.png', function(err, im) {
       var moments = contours.moments(i);
       var cgx = Math.round(moments.m10 / moments.m00);
       var cgy = Math.round(moments.m01 / moments.m00);
+      console.log(contours.moments(i));
+
+      // all.rectangle([cgx, cgy], [cgx + 5, cgy + 10], GREEN, 2);
+      all.ellipse(cgx + im.width(), cgy + im.height(), 100, 100);
+      
+      var left = im.width()/3 + im.width()/10
+
+      var center = (im.width() - left) + (im.width()/10)
+
+      var right = im.width()
+
+      console.log(cgx)
+      console.log(left)
+      console.log(center)
+      console.log(right)
+
+      if (cgx > left < right) {
+        console.log('center')
+      } else if (cgx > center) {
+        console.log('right')
+      }  else if (cgx < left) {
+        console.log('left')
+      }
+
+      // all.ellipse(im.width()/2, im.height()/2, 50, 50);
+
+
       big.drawContour(contours, i, GREEN);
       big.line([cgx - 5, cgy], [cgx + 5, cgy], RED);
       big.line([cgx, cgy - 5], [cgx, cgy + 5], RED);
     }
   }
 
+  console.log(contours.area(i))
   all.drawAllContours(contours, WHITE);
 
   big.save('./tmp/big.png');
