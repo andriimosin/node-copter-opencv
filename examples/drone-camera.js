@@ -48,7 +48,8 @@ var server = http.createServer(function(req, res) {
             im.save('./tmp/face-detection' + new Date().getTime() / 1000 + '.png');
             console.log('Image saved to ./tmp/face-detection.png');
 
-            sendPng(lastPng);
+            // sendPng('./tmp/face-detection1424560724.917.png');
+            sendPng(im.toBuffer());
           }
         });
       });
@@ -59,7 +60,7 @@ var server = http.createServer(function(req, res) {
   function sendPng(buffer) {
     console.log('buffer.length');
     console.log(buffer.length);
-    res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + buffer.length + '\n\n');
+    res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + buffer.length + '\n\n' + buffer);
     res.write(buffer);
   }
 
