@@ -1,6 +1,6 @@
 var arDrone = require('ar-drone');
 var http    = require('http');
-var cv = require('../lib/opencv');
+var cv      = require('../lib/opencv');
 
 console.log('Connecting png stream ...');
 
@@ -17,13 +17,11 @@ var server = http.createServer(function(req, res) {
   res.writeHead(200, { 'Content-Type': 'multipart/x-mixed-replace; boundary=--daboundary' });
 
   // if (!detectedImg) {
-  
+
   // res.end(lastPng);
   // } else {
     // res.end(detected);
   // }
-
-
 
   var lastPng;
   pngStream
@@ -37,7 +35,9 @@ var server = http.createServer(function(req, res) {
 
         var detectedImg = false;
 
-        im.detectObject("../data/haarcascade_frontalface_alt.xml", {}, function(err, faces){
+        sendPng(lastPng);
+
+        im.detectObject("../data/haarcascade_frontalface_alt_tree.xml", {}, function(err, faces) {
           if (err) throw err;
 
           for (var i = 0; i < faces.length; i++){
@@ -48,12 +48,10 @@ var server = http.createServer(function(req, res) {
             im.save('./tmp/face-detection' + new Date().getTime() / 1000 + '.png');
             console.log('Image saved to ./tmp/face-detection.png');
 
-            sendPng(lastPng);
+            sendPng(im.toBuffer());
           }
         });
       });
-
-
   });
 
   function sendPng(buffer) {
@@ -62,13 +60,8 @@ var server = http.createServer(function(req, res) {
     res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + buffer.length + '\n\n');
     res.write(buffer);
   }
-
-
 });
-
 
 server.listen(8080, function() {
   console.log('Serving latest png on port 8080 ...');
 });
-
-
