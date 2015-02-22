@@ -1,6 +1,6 @@
 var arDrone = require('ar-drone');
 var http    = require('http');
-var cv = require('../lib/opencv');
+var cv      = require('../lib/opencv');
 
 console.log('Connecting png stream ...');
 
@@ -17,13 +17,11 @@ var server = http.createServer(function(req, res) {
   res.writeHead(200, { 'Content-Type': 'multipart/x-mixed-replace; boundary=--daboundary' });
 
   // if (!detectedImg) {
-  
+
   // res.end(lastPng);
   // } else {
     // res.end(detected);
   // }
-
-
 
   var lastPng;
   pngStream
@@ -37,15 +35,19 @@ var server = http.createServer(function(req, res) {
 
         var detectedImg = false;
 
-        im.detectObject("../data/haarcascade_frontalface_alt.xml", {}, function(err, faces){
+        sendPng(lastPng);
+
+        im.detectObject("../data/haarcascade_frontalface_alt_tree.xml", {}, function(err, faces) {
           if (err) throw err;
+
+          console.log('Amount of founded faces: ' + faces.length);
 
           for (var i = 0; i < faces.length; i++){
             detectedImg = true;
 
             var face = faces[i];
             im.ellipse(face.x + face.width / 2, face.y + face.height / 2, face.width / 2, face.height / 2);
-            im.save('./tmp/face-detection' + new Date().getTime() / 1000 + '.png');
+            // im.save('./tmp/face-detection' + new Date().getTime() / 1000 + '.png');
             console.log('Image saved to ./tmp/face-detection.png');
 
             // sendPng('./tmp/face-detection1424560724.917.png');
@@ -53,23 +55,15 @@ var server = http.createServer(function(req, res) {
           }
         });
       });
-
-
   });
 
   function sendPng(buffer) {
-    console.log('buffer.length');
-    console.log(buffer.length);
-    res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + buffer.length + '\n\n' + buffer);
+    console.log('Buffer length: ' + buffer.length);
+    res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + buffer.length + '\n\n');
     res.write(buffer);
   }
-
-
 });
-
 
 server.listen(8080, function() {
   console.log('Serving latest png on port 8080 ...');
 });
-
-
