@@ -40,6 +40,8 @@ var server = http.createServer(function(req, res) {
         im.detectObject("../data/haarcascade_frontalface_alt_tree.xml", {}, function(err, faces) {
           if (err) throw err;
 
+          console.log('Amount of founded faces: ' + faces.length);
+
           for (var i = 0; i < faces.length; i++){
             detectedImg = true;
 
@@ -55,8 +57,7 @@ var server = http.createServer(function(req, res) {
   });
 
   function sendPng(buffer) {
-    console.log('buffer.length');
-    console.log(buffer.length);
+    console.log('Buffer length: ' + buffer.length);
     res.write('--daboundary\nContent-Type: image/png\nContent-length: ' + buffer.length + '\n\n');
     res.write(buffer);
   }
